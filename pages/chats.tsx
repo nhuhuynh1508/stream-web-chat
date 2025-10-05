@@ -112,6 +112,14 @@ export default function Chats() {
 
     const currentUser: UserResponse | null = client?.user as UserResponse;
 
+    function removeUser(userId: string) {
+        setUsers(users.filter((u) => u.id !== userId));
+    }
+
+    function resetActiveChannel() {
+        setActiveChannel(null); // clears the active chat
+    };
+
     return (
         <div className="flex h-screen bg-white text-foreground p-2 md:p-5">
             {/* Sidebar */}
@@ -120,7 +128,8 @@ export default function Chats() {
                 activeChannel={activeChannel}
                 selectUser={selectUser}
                 currentUser={currentUser}
-                
+                removeUser={removeUser}
+                resetActiveChannel={resetActiveChannel}
             />
 
             {/* Chatbox */}

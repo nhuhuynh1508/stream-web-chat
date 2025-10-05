@@ -1,30 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import React from "react"
 import { UserResponse, Channel } from "stream-chat";
+import { X } from "lucide-react";
 
 type SidebarProps = {
   users: UserResponse[];
   activeChannel: Channel | null;
   currentUser: UserResponse;
   selectUser: (user: UserResponse) => void;
+  removeUser: (userId: string) => void;
+  resetActiveChannel: () => void;
 };
 
-export default function Sidebar({ users, activeChannel, currentUser, selectUser }: SidebarProps) {
+export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel }: SidebarProps) {
     const otherUsers = users.filter((user) => user.id !== currentUser.id);
 
-    const renderUser = (user: UserResponse) => (
+    const renderUser = (user: UserResponse, clickable = true, removable = false) => (
         <div
             key={user.id}
             className={`flex items-center p-2 gap-2 rounded-lg cursor-pointer transition ${
                 activeChannel?.state?.members?.[user.id] ? "bg-primary/10" : "hover:bg-muted"
             }`}
-            onClick={() => selectUser(user)}
+            onClick={() => clickable && selectUser(user)}
             >
-            <div className="relative">
+            <div className="relative flex-shrink-0">
                 <img
-                src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
-                alt={user.name}
-                className="w-12 h-12 md:w-12 md:h-12 rounded-full"
+                    src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
+                    alt={user.name}
+                    className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                 />
                 <span
                 className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
@@ -32,9 +35,23 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser 
                 }`}
                 ></span>
             </div>
-            <span className="hidden md:inline font-semibold truncate md:text-base text-sm">
-                {user.name || user.id}
-            </span>
+            <div className="flex justify-between items-center w-full"> 
+                <span className="hidden md:inline font-medium truncate md:text-base text-sm text-gray-700">
+                    {user.name || user.id}
+                </span>
+                {removable && (
+                    <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        removeUser(user.id);
+                        resetActiveChannel();
+                    }}
+                    className="text-gray-400 hover:text-red-500 transition p-1 cursor-pointer"
+                    >
+                        <X size={18} />
+                    </button>
+                )}
+            </div>
         </div>
     );
 
@@ -49,17 +66,17 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser 
             <CardContent className="overflow-y-auto flex-1 space-y-2 flex flex-col justify-between">
                 <div className="space-y-2">
                 {otherUsers.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center md:text-left">
-                    No users online
+                    <p className="text-md text-gray-500 text-center justify-center">
+                    No users online.
                     </p>
                 ) : (
-                    otherUsers.map(renderUser)
+                    otherUsers.map((user) => renderUser(user, true, true))
                 )}
                 </div>
 
                 {/* Logged-in user at the bottom */}
                 <div className="border-t pt-2">
-                    {renderUser(currentUser)}
+                    {renderUser(currentUser, false)}
                 </div>
             </CardContent>
         </Card>
