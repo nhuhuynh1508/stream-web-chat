@@ -10,7 +10,6 @@ import {
   LocalMessage,
 } from "stream-chat";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MDEditor from "@uiw/react-md-editor";
 import ReactMarkdown from "react-markdown";
@@ -33,31 +32,31 @@ export default function Chats() {
     const chatClient = StreamChat.getInstance(apiKey);
 
     async function init() {
-      const safeId = username.toLowerCase().replace(/[^a-z0-9@_-]/g, "-");
+        const safeId = username.toLowerCase().replace(/[^a-z0-9@_-]/g, "-");
 
-      const res = await fetch("/api/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: safeId }),
-      });
-      const data = await res.json();
-      if (!data.token) return;
+        const res = await fetch("/api/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: safeId }),
+        });
+        const data = await res.json();
+        if (!data.token) return;
 
-      await chatClient.connectUser(
-        {
-          id: safeId,
-          name: username,
-          image: `https://api.dicebear.com/6.x/thumbs/svg?seed=${safeId}`,
-        },
-        data.token
-      );
+        await chatClient.connectUser(
+            {
+            id: safeId,
+            name: username,
+            image: `https://api.dicebear.com/6.x/thumbs/svg?seed=${safeId}`,
+            },
+            data.token
+        );
 
-      setClient(chatClient);
+        setClient(chatClient);
 
-      // Fetch users
-      const response = await chatClient.queryUsers({}, { last_active: -1 }, { limit: 20 });
-      const filtered = response.users.filter((u) => u.id !== safeId);
-      setUsers(filtered);
+        // Fetch users
+        const response = await chatClient.queryUsers({}, { last_active: -1 }, { limit: 20 });
+        const filtered = response.users.filter((u) => u.id !== safeId);
+        setUsers(filtered);
     }
 
     init();
@@ -94,6 +93,10 @@ export default function Chats() {
         setMessage("");
     }
 
+    const activeChatUser = Object.values(activeChannel?.state.members || []).find(
+        (m) => m.user?.id !== client?.user?.id
+    )?.user;
+
     if (!client)
         return <div className="p-6 text-gray-600">Loading chat...</div>;
 
@@ -118,14 +121,21 @@ export default function Chats() {
                     }`}
                     onClick={() => selectUser(user)}
                 >
-                    <img
-                    src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full"
-                    />
-                    {/* Only show username on md+ */}
+                    <div className="relative">
+                        <img
+                            src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
+                            alt={user.name}
+                            className="w-10 h-10 rounded-full"
+                        />
+                        <span
+                            className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
+                                user.online ? "bg-green-500" : "bg-gray-400"
+                            }`}
+                        ></span>
+                    </div>
+ 
                     <span className="hidden md:inline font-medium truncate md:text-base text-sm">
-                    {user.name || user.id}
+                        {user.name || user.id}
                     </span>
                 </div>
                 ))
@@ -134,15 +144,38 @@ export default function Chats() {
         </Card>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col ml-2 md:ml-5 p-2 md:p-5 rounded-xl border p-4">
+        <div className="flex-1 flex flex-col ml-2 md:ml-5 md:p-5 rounded-xl border p-4">
             {activeChannel ? (
             <>
-                <h2 className="text-lg md:text-2xl font-semibold mb-2 text-black">
-                Chatting with{" "}
-                {Object.values(activeChannel.state.members)
-                    .find((m) => m.user?.id !== client?.user?.id)
-                    ?.user?.name || "User"}
-                </h2>
+                <div className="flex items-center gap-3 mb-4 border-b pb-2">
+                    <div className="relative">
+                        <img
+                            src={
+                                activeChatUser?.image ||
+                                `https://api.dicebear.com/6.x/thumbs/svg?seed=${activeChatUser?.id}`
+                            }
+                            className="w-10 h-10 rounded-full"
+                        />
+                        <span
+                            className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
+                                activeChatUser?.online ? "bg-green-500" : "bg-gray-400"
+                            }`}
+                        ></span>
+                    </div>
+                    <div className="flex-col">
+                        <h2 className="text-lg md:text-2xl font-semibold text-black">
+                            {activeChatUser?.name || "User"}
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                            {activeChatUser?.online
+                                ? "Online"
+                                : activeChatUser?.last_active
+                                ? "Last active: " +
+                                new Date(activeChatUser.last_active).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                                : "Offline"}
+                        </p>
+                    </div>
+                </div>
 
                 <div className="flex-1 overflow-y-auto mb-4 space-y-3 p-2">
                 {messages.map((msg) => {
@@ -150,18 +183,28 @@ export default function Chats() {
                     return (
                     <div
                         key={msg.id}
-                        className={`flex w-full ${isOwn ? "justify-end" : "justify-start"}`}
+                        className={`flex w-full gap-5 ${isOwn ? "justify-end" : "justify-start"}`}
                     >
+                        {!isOwn && (
+                            <img
+                                src={
+                                msg.user?.image ||
+                                `https://api.dicebear.com/6.x/thumbs/svg?seed=${msg.user?.id}`
+                                }
+                                alt={msg.user?.name || "User"}
+                                className="w-8 h-8 rounded-full"
+                            />
+                        )}
                         <div
-                        className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm transition-colors ${
-                            isOwn
-                            ? "bg-primary text-primary-foreground rounded-br-none"
-                            : "bg-muted text-muted-foreground rounded-bl-none"
-                        }`}
+                            className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm transition-colors ${
+                                isOwn
+                                ? "bg-blue-400 text-primary-foreground rounded-br-none"
+                                : "bg-white text-muted-foreground rounded-bl-none"
+                            }`}
                         >
-                        <div className={`text-sm mb-1 ${isOwn ? "text-primary-foreground/70" : "text-muted-foreground/70"}`}>
+                        {/* <div className={`text-sm md:text-lg mb-1 ${isOwn ? "text-black" : "text-muted-foreground/70"}`}>
                             {msg.user?.name || msg.user?.id}
-                        </div>
+                        </div> */}
                         
                         <div className={`font-medium ${isOwn ? "text-white" : "text-black"}`}>
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -179,19 +222,19 @@ export default function Chats() {
                 })}
                 </div>
 
-                <div className="flex gap-2">
-                <MDEditor
-                    value={message}
-                    onChange={(value) => setMessage(value ?? "")}
-                    height={100}
-                    className="flex-1"
-                    hideToolbar={false}
-                />
-                <Button onClick={sendMessage}>Send</Button>
+                <div className="flex gap-2 items-center">
+                    <MDEditor
+                        value={message}
+                        onChange={(value) => setMessage(value ?? "")}
+                        height={100}
+                        className="flex-1"
+                        hideToolbar={false}
+                    />
+                    <Button onClick={sendMessage} className="bg-white border border-gray-600 shadow-sm text-black hover:bg-gray-300 cursor-pointer">Send</Button>
                 </div>
             </>
             ) : (
-            <div className="m-auto text-gray-500">Select a user to start chatting 💬</div>
+                <div className="m-auto text-gray-500">Select a user to start chatting 💬</div>
             )}
         </div>
     </div>
