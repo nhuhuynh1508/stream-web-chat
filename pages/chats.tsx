@@ -12,6 +12,9 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import MDEditor from "@uiw/react-md-editor";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 
@@ -131,10 +134,10 @@ export default function Chats() {
         </Card>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col ml-2 md:ml-5 rounded-xl border p-4">
+        <div className="flex-1 flex flex-col ml-2 md:ml-5 p-2 md:p-5 rounded-xl border p-4">
             {activeChannel ? (
             <>
-                <h2 className="text-lg font-semibold mb-2">
+                <h2 className="text-lg md:text-2xl font-semibold mb-2 text-black">
                 Chatting with{" "}
                 {Object.values(activeChannel.state.members)
                     .find((m) => m.user?.id !== client?.user?.id)
@@ -159,8 +162,11 @@ export default function Chats() {
                         <div className={`text-sm mb-1 ${isOwn ? "text-primary-foreground/70" : "text-muted-foreground/70"}`}>
                             {msg.user?.name || msg.user?.id}
                         </div>
+                        
                         <div className={`font-medium ${isOwn ? "text-white" : "text-black"}`}>
-                            {msg.text}
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {msg.text || ""}
+                            </ReactMarkdown>
                         </div>
                         {msg.created_at && (
                             <div className={`text-[10px] mt-1 text-right ${isOwn ? "text-primary-foreground/50" : "text-muted-foreground/50"}`}>
@@ -174,11 +180,12 @@ export default function Chats() {
                 </div>
 
                 <div className="flex gap-2">
-                <Input
-                    placeholder="Type a message..."
+                <MDEditor
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    onChange={(value) => setMessage(value ?? "")}
+                    height={100}
+                    className="flex-1"
+                    hideToolbar={false}
                 />
                 <Button onClick={sendMessage}>Send</Button>
                 </div>
