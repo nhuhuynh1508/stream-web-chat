@@ -12,11 +12,14 @@ import {
 
 import Sidebar from "./components/sidebar";
 import Chatbox from "./components/chatbox";
+import { useRouter } from "next/navigation";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 
 export default function Chats() {
   const { username } = useContext(Context);
+  const router = useRouter();
+
   const [client, setClient] = useState<StreamChat | null>(null);
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
   const [message, setMessage] = useState("");
@@ -91,6 +94,17 @@ export default function Chats() {
         setMessage("");
     }
 
+    async function logout() {
+        if (client) {
+            await client.disconnectUser();
+            setClient(null);
+            setActiveChannel(null);
+            setUsers([]);
+            setMessages([]);
+        }
+
+        router.push("/login");
+    }
     
 
     if (!client)
@@ -106,6 +120,7 @@ export default function Chats() {
                 activeChannel={activeChannel}
                 selectUser={selectUser}
                 currentUser={currentUser}
+                
             />
 
             {/* Chatbox */}
@@ -116,6 +131,7 @@ export default function Chats() {
                 message={message}
                 setMessage={setMessage}
                 sendMessage={sendMessage}
+                logout={logout}
             />
         </div>
     );

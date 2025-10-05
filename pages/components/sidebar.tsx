@@ -37,6 +37,8 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser 
             </span>
         </div>
     );
+
+    
     return (
         <Card className="flex-shrink-0 w-20 md:w-96 h-full border-r rounded-xl overflow-hidden flex flex-col">
             <CardHeader className="px-4 py-3">
@@ -56,7 +58,9 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser 
                 </div>
 
                 {/* Logged-in user at the bottom */}
-                <div className="border-t pt-2">{renderUser(currentUser)}</div>
+                <div className="border-t pt-2">
+                    {renderUser(currentUser)}
+                </div>
             </CardContent>
         </Card>
     )
