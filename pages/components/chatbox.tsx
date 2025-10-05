@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import React from "react";
 import { Channel, LocalMessage, MessageResponse } from "stream-chat";
+import { LogOut, Send } from "lucide-react";
 
 type ChatboxProps = {
   activeChannel: Channel | null;
@@ -12,9 +13,10 @@ type ChatboxProps = {
   message: string;
   setMessage: (value: string) => void;
   sendMessage: () => void;
+  logout: () => void;
 };
 
-export default function Chatbox({activeChannel, clientId, messages, message, setMessage, sendMessage}: ChatboxProps) {
+export default function Chatbox({activeChannel, clientId, messages, message, setMessage, sendMessage, logout}: ChatboxProps) {
     const activeChatUser = Object.values(activeChannel?.state.members || []).find(
         (m) => m.user?.id !== clientId
     )?.user;
@@ -40,18 +42,26 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                             }`}
                         ></span>
                     </div>
-                    <div className="flex-col">
-                        <h2 className="text-lg md:text-2xl font-semibold text-black">
-                            {activeChatUser?.name || "User"}
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                            {activeChatUser?.online
-                                ? "Online"
-                                : activeChatUser?.last_active
-                                ? "Last active: " +
-                                new Date(activeChatUser.last_active).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                                : "Offline"}
-                        </p>
+                    <div className="flex justify-between items-center w-full px-2 py-2">
+                        <div className="flex flex-col">
+                            <h2 className="text-lg md:text-2xl font-semibold text-black">
+                                {activeChatUser?.name || "User"}
+                            </h2>
+                            <p className="text-sm text-gray-500">
+                                {activeChatUser?.online
+                                    ? "Online"
+                                    : activeChatUser?.last_active
+                                    ? "Last active: " +
+                                    new Date(activeChatUser.last_active).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                                    : "Offline"}
+                            </p>
+                        </div>
+                        <button
+                            onClick={logout}
+                            className="items-center px-3 py-2 border border-red-500 text-red-500 text-sm md:text-sm rounded-lg hover:bg-red-200 transition cursor-pointer"
+                        >
+                            <LogOut />
+                        </button>
                     </div>
                 </div>
 
@@ -70,7 +80,7 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                                 `https://api.dicebear.com/6.x/thumbs/svg?seed=${msg.user?.id}`
                                 }
                                 alt={msg.user?.name || "User"}
-                                className="w-8 h-8 rounded-full"
+                                className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                             />
                         )}
                         <div
@@ -108,7 +118,9 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                         className="flex-1"
                         hideToolbar={false}
                     />
-                    <Button onClick={sendMessage} className="bg-white border border-gray-600 shadow-sm text-black hover:bg-gray-300 cursor-pointer">Send</Button>
+                    <Button onClick={sendMessage} className="bg-white border border-gray-600 shadow-sm text-black hover:bg-gray-300 cursor-pointer">
+                        <Send /> Send 
+                    </Button>
                 </div>
             </>
             ) : (
