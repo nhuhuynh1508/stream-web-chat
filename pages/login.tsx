@@ -25,7 +25,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 to-white">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-200 to-white">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <Avatar className="mx-auto mb-2">
@@ -37,17 +37,17 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6 flex flex-col items-center p-3">
             <Input
               type="text"
-              placeholder="Enter your username"
+              placeholder="Enter your username..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
 
             {error && <p className="text-sm text-red-500">{error}</p>}
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full max-w-2xs cursor-pointer hover:bg-gray-700">
               Start Chatting
             </Button>
           </form>
