@@ -34,7 +34,7 @@ export function Search({ placeholder = "Search users...", onSearch }: SearchProp
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className="pl-9 pr-9 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+        className="pl-9 pr-9 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 !bg-gray-200"
       />
       {query && (
         <button

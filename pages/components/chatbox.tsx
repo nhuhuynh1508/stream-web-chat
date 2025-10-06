@@ -22,13 +22,13 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
     )?.user;
 
     return (
-        <div className={`flex-1 flex flex-col ml-2 md:ml-5 md:p-5 rounded-xl border p-4 shadow-md ${
+        <div className={`flex-1 flex flex-col ml-2 md:ml-5 md:p-5 rounded-xl border p-4 shadow-md bg-gradient-to-br from-purple-200 to-white ${
             activeChannel ? "bg-white" : "bg-gray-100"
         }`}>
             {activeChannel ? (
             <>
-                <div className="flex items-center gap-3 mb-4 border-b pb-2">
-                    <div className="relative">
+                <div className="flex items-center gap-3 mb-4 border-b-2 border-gray-300 pb-2">
+                    <div className="relative flex-shrink-0 w-10 h-10">
                         <img
                             src={
                                 activeChatUser?.image ||
