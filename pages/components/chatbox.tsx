@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import React from "react";
 import { Channel, LocalMessage, MessageResponse } from "stream-chat";
 import { LogOut, Send } from "lucide-react";
+import Image from "next/image";
 
 type ChatboxProps = {
   activeChannel: Channel | null;
@@ -29,12 +30,13 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
             <>
                 <div className="flex items-center gap-3 mb-4 border-b-2 border-gray-300 pb-2">
                     <div className="relative flex-shrink-0 w-10 h-10">
-                        <img
+                        <Image
                             src={
                                 activeChatUser?.image ||
                                 `https://api.dicebear.com/6.x/thumbs/svg?seed=${activeChatUser?.id}`
                             }
                             className="w-10 h-10 rounded-full"
+                            alt={activeChatUser?.image || "User Image"}
                         />
                         <span
                             className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
@@ -74,7 +76,7 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                         className={`flex w-full gap-5 ${isOwn ? "justify-end" : "justify-start"}`}
                     >
                         {!isOwn && (
-                            <img
+                            <Image
                                 src={
                                 msg.user?.image ||
                                 `https://api.dicebear.com/6.x/thumbs/svg?seed=${msg.user?.id}`

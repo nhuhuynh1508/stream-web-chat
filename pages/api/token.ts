@@ -34,9 +34,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const token = serverClient.createToken(safeId);
 
     return res.status(200).json({ token });
-  } catch (err: any) {
-    console.error("Error generating token:", err);
-    return res.status(500).json({ error: err.message || "Internal Server Error" });
+  } catch (err) {
+    if (err instanceof Error) {
+    console.error("Error generating token:", err.message);
+    return res.status(500).json({ error: err.message });
+    }
+    console.error("Unknown error generating token:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
 

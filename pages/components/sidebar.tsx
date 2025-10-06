@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import React, { useState } from "react"
 import { UserResponse, Channel } from "stream-chat";
-import { LogOut, MoreHorizontal, UserPlus, X } from "lucide-react";
+import { LogOut, MoreHorizontal, X } from "lucide-react";
 import { Search } from "./search";
 import { AddUserDialog } from "./dialog";
+import Image from "next/image";
 
 type SidebarProps = {
   users: UserResponse[];
@@ -34,9 +35,9 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
             onClick={() => clickable && selectUser(user)}
             >
             <div className="relative flex-shrink-0">
-                <img
+                <Image
                     src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
-                    alt={user.name}
+                    alt={user.name || "username"}
                     className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                 />
                 <span
@@ -108,9 +109,9 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
                     <div className="flex items-center justify-between p-2 gap-2 rounded-lg relative">
                         {/* Avatar */}
                         <div className="relative flex-shrink-0">
-                        <img
+                        <Image
                             src={currentUser.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${currentUser.id}`}
-                            alt={currentUser.name}
+                            alt={currentUser.name || "username"}
                             className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                         />
                         <span

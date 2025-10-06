@@ -122,7 +122,7 @@ export default function Chats() {
 
     async function addUser(newUser: { id: string; name: string; image?: string }) {
         try {
-            setUsers((prev) => [...prev, newUser as any]);
+            setUsers((prev) => [...prev, newUser]);
         } catch (err) {
             console.error("Error adding user:", err);
         }
