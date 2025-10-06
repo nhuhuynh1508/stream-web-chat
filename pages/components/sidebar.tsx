@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import React, { useState } from "react"
 import { UserResponse, Channel } from "stream-chat";
-import { LogOut, MoreHorizontal, X } from "lucide-react";
+import { LogOut, MoreHorizontal, UserPlus, X } from "lucide-react";
 import { Search } from "./search";
+import { AddUserDialog } from "./dialog";
 
 type SidebarProps = {
   users: UserResponse[];
@@ -12,9 +13,10 @@ type SidebarProps = {
   removeUser: (userId: string) => void;
   resetActiveChannel: () => void;
   logout: () => void;
+  addUser: (user: { id: string; name: string }) => void;
 };
 
-export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel, logout }: SidebarProps) {
+export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel, logout, addUser }: SidebarProps) {
     const otherUsers = users.filter((user) => user.id !== currentUser.id);
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -76,12 +78,17 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
 
     
     return (
-        <Card className="flex-shrink-0 w-20 md:w-96 h-full border-r rounded-xl overflow-hidden flex flex-col">
+        <Card className="flex-shrink-0 w-20 md:w-96 h-full border-r rounded-xl overflow-hidden flex flex-col bg-gradient-to-br from-blue-200 to-white">
             <CardHeader className="px-4 py-3">
-                <CardTitle className="hidden text-lg md:text-2xl md:block w-full text-left border-b-2">
-                    Chats
-                </CardTitle>
-                <div className="hidden md:block sticky top-0 bg-white z-10 py-3">
+                <div className="flex items-center justify-between w-full border-b-2 border-gray-300 pb-2">
+                    <CardTitle className="hidden md:block text-lg md:text-2xl text-left">
+                        Chats
+                    </CardTitle>
+                    <div className="flex-shrink-0">
+                        <AddUserDialog onAddUser={addUser} />
+                    </div>
+                </div>
+                <div className="hidden md:block sticky top-0 z-10 py-3">
                     <Search onSearch={setSearchQuery} />
                 </div>
             </CardHeader>

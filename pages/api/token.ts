@@ -24,6 +24,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const serverClient = StreamChat.getInstance(apiKey, apiSecret);
 
     const safeId = userId.toLowerCase().replace(/[^a-z0-9@_-]/g, "-");
+
+    await serverClient.upsertUser({
+      id: safeId,
+      name: safeId,
+      image: `https://api.dicebear.com/6.x/thumbs/svg?seed=${safeId}`,
+    });
+
     const token = serverClient.createToken(safeId);
 
     return res.status(200).json({ token });

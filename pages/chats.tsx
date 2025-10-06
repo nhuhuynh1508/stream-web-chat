@@ -120,6 +120,14 @@ export default function Chats() {
         setActiveChannel(null); // clears the active chat
     };
 
+    async function addUser(newUser: { id: string; name: string; image?: string }) {
+        try {
+            setUsers((prev) => [...prev, newUser as any]);
+        } catch (err) {
+            console.error("Error adding user:", err);
+        }
+    }
+
     return (
         <div className="flex h-screen bg-white text-foreground p-2 md:p-5">
             {/* Sidebar */}
@@ -131,6 +139,7 @@ export default function Chats() {
                 removeUser={removeUser}
                 resetActiveChannel={resetActiveChannel}
                 logout={logout}
+                addUser={addUser}
             />
 
             {/* Chatbox */}
