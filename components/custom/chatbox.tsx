@@ -1,26 +1,31 @@
-import { Button } from "@/components/ui/button";
-import MDEditor from "@uiw/react-md-editor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import React from "react";
+import React, { useState } from "react";
 import { Channel, LocalMessage, MessageResponse } from "stream-chat";
-import { LogOut, Send } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Image from "next/image";
+import ChatEditor from "./chateditor";
 
 type ChatboxProps = {
   activeChannel: Channel | null;
   clientId: string; 
   messages: (MessageResponse | LocalMessage)[];
-  message: string;
-  setMessage: (value: string) => void;
-  sendMessage: () => void;
   logout: () => void;
 };
 
-export default function Chatbox({activeChannel, clientId, messages, message, setMessage, sendMessage, logout}: ChatboxProps) {
+export default function Chatbox({activeChannel, clientId, messages, logout}: ChatboxProps) {
+    const [message, setMessage] = useState("");
     const activeChatUser = Object.values(activeChannel?.state.members || []).find(
         (m) => m.user?.id !== clientId
     )?.user;
+
+    const sendMessage = () => {
+        if (!message.trim()) return;
+        if (!activeChannel) return;
+
+        activeChannel.sendMessage({ text: message });
+        setMessage("");
+    };
 
     return (
         <div className={`flex-1 flex flex-col ml-2 md:ml-5 md:p-5 rounded-xl border p-4 shadow-md bg-gradient-to-br from-purple-200 to-white ${
@@ -119,23 +124,12 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                 </div>
 
                 <div className="flex gap-2 items-center">
-                    <MDEditor
-                        value={message}
-                        onChange={(value) => setMessage(value ?? "")}
-                        height={100}
-                        className="flex-1 border border-gray-700"
-                        data-color-mode="light" 
-                        hideToolbar={false}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        }}          
+                    <ChatEditor
+                        message={message}
+                        setMessage={setMessage}
+                        sendMessage={sendMessage}
                     />
-                    <Button onClick={sendMessage} className="bg-white border border-gray-600 shadow-sm text-black hover:bg-gray-300 cursor-pointer">
-                        <Send /> Send 
-                    </Button>
+                    
                 </div>
             </>
             ) : (

@@ -22,7 +22,6 @@ export default function Chats() {
 
   const [client, setClient] = useState<StreamChat | null>(null);
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
-  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<(MessageResponse | LocalMessage)[]>([]);
 
   const [users, setUsers] = useState<UserResponse[]>([]);
@@ -87,13 +86,6 @@ export default function Chats() {
         setMessages([...channel.state.messages]);
     }
 
-    // Send a message
-    async function sendMessage() {
-        if (!message || !activeChannel) return;
-        await activeChannel.sendMessage({ text: message });
-        setMessage("");
-    }
-
     async function logout() {
         if (client) {
             await client.disconnectUser();
@@ -147,9 +139,6 @@ export default function Chats() {
                 activeChannel={activeChannel}
                 clientId={client?.user?.id || ""}
                 messages={messages}
-                message={message}
-                setMessage={setMessage}
-                sendMessage={sendMessage}
                 logout={logout}
             />
         </div>
