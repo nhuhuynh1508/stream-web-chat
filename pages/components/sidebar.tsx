@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import React, { useState } from "react"
 import { UserResponse, Channel } from "stream-chat";
 import { LogOut, MoreHorizontal, X } from "lucide-react";
+import { Search } from "./search";
 
 type SidebarProps = {
   users: UserResponse[];
@@ -16,6 +17,11 @@ type SidebarProps = {
 export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel, logout }: SidebarProps) {
     const otherUsers = users.filter((user) => user.id !== currentUser.id);
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const [searchQuery, setSearchQuery] = useState("")
+    const filteredUsers = otherUsers.filter((user) =>
+        (user.name || user.id).toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const renderUser = (user: UserResponse, clickable = true, removable = false, menuButton?: { icon: React.ReactNode; onClick: () => void }) => (
         <div
@@ -72,23 +78,26 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
     return (
         <Card className="flex-shrink-0 w-20 md:w-96 h-full border-r rounded-xl overflow-hidden flex flex-col">
             <CardHeader className="px-4 py-3">
-                <CardTitle className="hidden text-lg md:text-2xl md:block w-full text-left border-b-2 pb-2">
+                <CardTitle className="hidden text-lg md:text-2xl md:block w-full text-left border-b-2">
                     Chats
                 </CardTitle>
+                <div className="hidden md:block sticky top-0 bg-white z-10 py-3">
+                    <Search onSearch={setSearchQuery} />
+                </div>
             </CardHeader>
-            <CardContent className="overflow-y-auto flex-1 space-y-2 flex flex-col justify-between">
-                <div className="space-y-2">
-                {otherUsers.length === 0 ? (
+            <CardContent className="overflow-y-auto flex-1 space-y-2 flex flex-col">
+                <div className="space-y-1">
+                    {otherUsers.length === 0 ? (
                     <p className="text-md text-gray-500 text-center justify-center">
                     No users online.
                     </p>
                 ) : (
-                    otherUsers.map((user) => renderUser(user, true, true))
+                    filteredUsers.map((user) => renderUser(user, true, true))
                 )}
                 </div>
 
                 {/* Logged-in user at the bottom */}
-                <div className="border-t pt-2">
+                <div className="border-t pt-2 mt-auto">
                     <div className="flex items-center justify-between p-2 gap-2 rounded-lg relative">
                         {/* Avatar */}
                         <div className="relative flex-shrink-0">
@@ -109,32 +118,32 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
                             {currentUser.name || currentUser.id}
                         </span>
 
-                    <div className="relative">
-                        <button
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            setMenuOpen(!menuOpen);
-                            }}
-                            className="text-gray-400 hover:text-gray-700 transition p-1 cursor-pointer flex-shrink-0"
-                        >
-                            <MoreHorizontal size={18} />
-                        </button>
-
-                        {/* Dropdown positioned next to the icon */}
-                        {menuOpen && (
-                            <div className="absolute bottom-full right-0 ml-2 w-32 bg-white border rounded-lg shadow-lg z-50">
+                        <div className="relative">
                             <button
-                                onClick={logout}
-                                className="flex items-center w-full px-3 py-2 text-sm text-red-500 hover:bg-red-100 transition rounded-lg cursor-pointer"
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                setMenuOpen(!menuOpen);
+                                }}
+                                className="text-gray-400 hover:text-gray-700 transition p-1 cursor-pointer flex-shrink-0"
                             >
-                                <LogOut size={16} className="mr-2" />
-                                Logout
+                                <MoreHorizontal size={18} />
                             </button>
-                            </div>
-                        )}
+
+                            {/* Dropdown positioned next to the icon */}
+                            {menuOpen && (
+                                <div className="absolute bottom-full right-0 ml-2 w-32 bg-white border rounded-lg shadow-lg z-50">
+                                    <button
+                                        onClick={logout}
+                                        className="flex items-center w-full px-3 py-2 text-sm text-red-500 hover:bg-red-100 transition rounded-lg cursor-pointer"
+                                    >
+                                        <LogOut size={16} className="mr-2" />
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>                
             </CardContent>
         </Card>
     )
