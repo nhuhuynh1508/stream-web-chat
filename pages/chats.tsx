@@ -10,8 +10,8 @@ import {
   LocalMessage,
 } from "stream-chat";
 
-import Sidebar from "./components/sidebar";
-import Chatbox from "./components/chatbox";
+import Sidebar from "../components/custom/sidebar";
+import Chatbox from "../components/custom/chatbox";
 import { useRouter } from "next/navigation";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
