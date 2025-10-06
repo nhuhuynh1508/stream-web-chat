@@ -29,7 +29,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <Avatar className="mx-auto mb-2">
-            <AvatarImage src={`https://api.dicebear.com/6.x/thumbs/svg?seed=${username || "guest"}`} />
+            <AvatarImage src={`https://api.dicebear.com/6.x/thumbs/png?seed=${username || "guest"}`} />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
           <CardTitle className="text-2xl font-semibold">Welcome to Chat</CardTitle>

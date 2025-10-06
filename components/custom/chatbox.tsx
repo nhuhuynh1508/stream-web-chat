@@ -31,12 +31,15 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                 <div className="flex items-center gap-3 mb-4 border-b-2 border-gray-300 pb-2">
                     <div className="relative flex-shrink-0 w-10 h-10">
                         <Image
+                            unoptimized
                             src={
                                 activeChatUser?.image ||
-                                `https://api.dicebear.com/6.x/thumbs/svg?seed=${activeChatUser?.id}`
+                                `https://api.dicebear.com/6.x/thumbs/png?seed=${activeChatUser?.id}`
                             }
                             className="w-10 h-10 rounded-full"
                             alt={activeChatUser?.image || "User Image"}
+                            width={48}
+                            height={48}
                         />
                         <span
                             className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
@@ -77,12 +80,15 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                     >
                         {!isOwn && (
                             <Image
+                                unoptimized
                                 src={
                                 msg.user?.image ||
-                                `https://api.dicebear.com/6.x/thumbs/svg?seed=${msg.user?.id}`
+                                `https://api.dicebear.com/6.x/thumbs/png?seed=${msg.user?.id}`
                                 }
                                 alt={msg.user?.name || "User"}
                                 className="w-12 h-12 md:w-12 md:h-12 rounded-full"
+                                width={48}
+                                height={48}
                             />
                         )}
                         <div

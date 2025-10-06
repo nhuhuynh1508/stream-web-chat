@@ -47,7 +47,7 @@ export default function Chats() {
             {
                 id: safeId,
                 name: username,
-                image: `https://api.dicebear.com/6.x/thumbs/svg?seed=${safeId}`,
+                image: `https://api.dicebear.com/6.x/thumbs/png?seed=${safeId}`,
             },
             data.token
         );

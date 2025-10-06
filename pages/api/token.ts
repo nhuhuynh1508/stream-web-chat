@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await serverClient.upsertUser({
       id: safeId,
       name: safeId,
-      image: `https://api.dicebear.com/6.x/thumbs/svg?seed=${safeId}`,
+      image: `https://api.dicebear.com/6.x/thumbs/png?seed=${safeId}`,
     });
 
     const token = serverClient.createToken(safeId);

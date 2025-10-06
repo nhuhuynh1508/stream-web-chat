@@ -36,8 +36,11 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
             >
             <div className="relative flex-shrink-0">
                 <Image
-                    src={user.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${user.id}`}
+                    unoptimized
+                    src={user.image || `https://api.dicebear.com/6.x/thumbs/png?seed=${user.id}`}
                     alt={user.name || "username"}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                 />
                 <span
@@ -110,8 +113,11 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
                         {/* Avatar */}
                         <div className="relative flex-shrink-0">
                         <Image
-                            src={currentUser.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${currentUser.id}`}
+                            unoptimized
+                            src={currentUser.image || `https://api.dicebear.com/6.x/thumbs/png?seed=${currentUser.id}`}
                             alt={currentUser.name || "username"}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 md:w-12 md:h-12 rounded-full"
                         />
                         <span
