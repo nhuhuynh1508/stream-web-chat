@@ -130,6 +130,7 @@ export default function Chats() {
                 currentUser={currentUser}
                 removeUser={removeUser}
                 resetActiveChannel={resetActiveChannel}
+                logout={logout}
             />
 
             {/* Chatbox */}

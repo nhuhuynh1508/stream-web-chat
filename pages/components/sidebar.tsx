@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import React from "react"
+import React, { useState } from "react"
 import { UserResponse, Channel } from "stream-chat";
-import { X } from "lucide-react";
+import { LogOut, MoreHorizontal, X } from "lucide-react";
 
 type SidebarProps = {
   users: UserResponse[];
@@ -10,12 +10,14 @@ type SidebarProps = {
   selectUser: (user: UserResponse) => void;
   removeUser: (userId: string) => void;
   resetActiveChannel: () => void;
+  logout: () => void;
 };
 
-export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel }: SidebarProps) {
+export default function Sidebar({ users, activeChannel, currentUser, selectUser, removeUser, resetActiveChannel, logout }: SidebarProps) {
     const otherUsers = users.filter((user) => user.id !== currentUser.id);
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    const renderUser = (user: UserResponse, clickable = true, removable = false) => (
+    const renderUser = (user: UserResponse, clickable = true, removable = false, menuButton?: { icon: React.ReactNode; onClick: () => void }) => (
         <div
             key={user.id}
             className={`flex items-center p-2 gap-2 rounded-lg cursor-pointer transition ${
@@ -52,6 +54,17 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
                     </button>
                 )}
             </div>
+            {menuButton && (
+                <button
+                    onClick={(e) => {
+                    e.stopPropagation();
+                    menuButton.onClick();
+                    }}
+                    className="text-gray-400 hover:text-gray-700 transition p-1 cursor-pointer flex-shrink-0"
+                >
+                    {menuButton.icon}
+                </button>
+            )}
         </div>
     );
 
@@ -76,8 +89,52 @@ export default function Sidebar({ users, activeChannel, currentUser, selectUser,
 
                 {/* Logged-in user at the bottom */}
                 <div className="border-t pt-2">
-                    {renderUser(currentUser, false)}
+                    <div className="flex items-center justify-between p-2 gap-2 rounded-lg relative">
+                        {/* Avatar */}
+                        <div className="relative flex-shrink-0">
+                        <img
+                            src={currentUser.image || `https://api.dicebear.com/6.x/thumbs/svg?seed=${currentUser.id}`}
+                            alt={currentUser.name}
+                            className="w-12 h-12 md:w-12 md:h-12 rounded-full"
+                        />
+                        <span
+                            className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${
+                            currentUser.online ? "bg-green-500" : "bg-gray-400"
+                            }`}
+                        ></span>
+                        </div>
+
+                        {/* Name */}
+                        <span className="truncate font-medium text-sm md:text-base text-gray-700 flex-1">
+                            {currentUser.name || currentUser.id}
+                        </span>
+
+                    <div className="relative">
+                        <button
+                            onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpen(!menuOpen);
+                            }}
+                            className="text-gray-400 hover:text-gray-700 transition p-1 cursor-pointer flex-shrink-0"
+                        >
+                            <MoreHorizontal size={18} />
+                        </button>
+
+                        {/* Dropdown positioned next to the icon */}
+                        {menuOpen && (
+                            <div className="absolute bottom-full right-0 ml-2 w-32 bg-white border rounded-lg shadow-lg z-50">
+                            <button
+                                onClick={logout}
+                                className="flex items-center w-full px-3 py-2 text-sm text-red-500 hover:bg-red-100 transition rounded-lg cursor-pointer"
+                            >
+                                <LogOut size={16} className="mr-2" />
+                                Logout
+                            </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
+            </div>
             </CardContent>
         </Card>
     )

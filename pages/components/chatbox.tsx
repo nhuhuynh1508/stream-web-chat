@@ -58,7 +58,7 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                         </div>
                         <button
                             onClick={logout}
-                            className="items-center px-3 py-2 border border-red-500 text-red-500 text-sm md:text-sm rounded-lg hover:bg-red-200 transition cursor-pointer"
+                            className="md:hidden items-center px-3 py-2 border border-red-500 text-red-500 text-sm md:text-sm rounded-lg hover:bg-red-200 transition cursor-pointer"
                         >
                             <LogOut />
                         </button>
@@ -115,8 +115,15 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                         value={message}
                         onChange={(value) => setMessage(value ?? "")}
                         height={100}
-                        className="flex-1"
+                        className="flex-1 border border-gray-700"
+                        data-color-mode="light" 
                         hideToolbar={false}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }}          
                     />
                     <Button onClick={sendMessage} className="bg-white border border-gray-600 shadow-sm text-black hover:bg-gray-300 cursor-pointer">
                         <Send /> Send 
@@ -124,7 +131,7 @@ export default function Chatbox({activeChannel, clientId, messages, message, set
                 </div>
             </>
             ) : (
-                <div className="m-auto text-gray-500 text-xl font-sans">Select a user to start chatting 💬</div>
+                <div className="m-auto text-gray-500 text-lg">Select a user to start chatting.... 💬</div>
             )}
         </div>
     )
